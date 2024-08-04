@@ -45,8 +45,7 @@ class Login(base.Base):
         """Execute the actions necessary to perform a `molecule login` and returns None."""
         c = self._config
         if (not c.state.created) and c.driver.managed:
-            msg = "Instances not created.  Please create instances first."
-            util.sysexit_with_message(msg)
+            base.execute_subcommand(c, "create")
 
         hosts = [d["name"] for d in self._config.platforms.instances]
         hostname = self._get_hostname(hosts)  # type: ignore[no-untyped-call]
@@ -121,6 +120,6 @@ def login(ctx, host, scenario_name):  # type: ignore[no-untyped-def] # pragma: n
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args = {"subcommand": subcommand, "host": host}
 
-    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)  # type: ignore[no-untyped-call]
+    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:
         base.execute_subcommand(scenario.config, subcommand)
